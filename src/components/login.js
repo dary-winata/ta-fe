@@ -1,23 +1,30 @@
-import { Card, Form, Input, Button } from 'antd';
-import { registerUser } from './utils/db-exp'
+import { Card, Form, Input, Checkbox, Button, InputNumber } from 'antd'
+import { loginUser } from './utils/db-exp'
 import { useEffect } from 'react'
 
-const Register = () => {
-    useEffect = () => {
-        if(localStorage.getItem("username") != null)
+const Login = () => {
+    useEffect(() => {
+        if(localStorage.getItem('username') != null) {
             window.location.href = "/dashboard"
-    }
+        }
+    }, [])
     
     const onFinish = (user) => {
-        registerUser(user.username, user.password, user.email).then((result) => {
-            localStorage.setItem("username", user.username)
-            window.location.href = "/dashboard"
+        loginUser(user.username, user.password).then((result) => {
+            if(result.data.data == true) {
+                localStorage.setItem("username", user.username)
+                window.location.href="/dashboard"
+            }
         })
-    }
+      };
+
+    const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+    };
 
     return (
-        <div className="site-card-border-less-wrapper" style={{backgroundColor: "gray", width: "100vw", height:"100vh"}}>
-            <Card className='col-md-6 col-md-offset-3' style={{width: 300, borderRadius: 20, float: "none", margin: 0,
+        <div className="site-card-border-less-wrapper" style={{backgroundColor: "red", width: "100vw", height:"100vh"}}>
+            <Card className='col-md-6 col-md-offset-3' style={{width: 300, borderRadius: 20, float: "none", margin: 0, 
                 position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)"}}>
                 <Form name="basic"
                     labelCol={{
@@ -26,31 +33,17 @@ const Register = () => {
                     wrapperCol={{
                         span: 16,
                     }}
-                    initialValues={{
-                        remember: true,
-                    }}
-                    onFinish={onFinish}
+                        onFinish={onFinish}
+                        onFinishFailed={onFinishFailed}
                     autoComplete="off"
                     >
-                    <Form.Item
-                        label="Email"
-                        name="email"
-                        rules={[
-                        {
-                            required: true,
-                            message: 'Please input your email!',
-                        },
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
                     <Form.Item
                         label="Username"
                         name="username"
                         rules={[
                         {
                             required: true,
-                            message: 'Please input your name!',
+                            message: 'Please input your Username!',
                         },
                         ]}
                     >
@@ -71,7 +64,7 @@ const Register = () => {
                     </Form.Item>
 
                     <h1>
-                    Have an account?<a href='/login'>log in</a></h1>
+                    didn't have and account?<a href='/register'>sign in</a></h1>
 
                         <Form.Item
                             wrapperCol={{
@@ -87,4 +80,4 @@ const Register = () => {
     )
 }
 
-export  default Register;
+export default Login
